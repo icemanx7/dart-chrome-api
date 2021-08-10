@@ -1,8 +1,7 @@
 @JS()
 library chrome;
 
-import 'dart:js_util';
-
+import 'package:chrome_api/tabs/tabs.dart';
 import 'package:js/js.dart';
 
 @JS('chrome.runtime')
@@ -20,31 +19,32 @@ class ChromeTabs {
   external static getCurrent(void Function() callback);
   external static create(
       CreateProperties createProperties, void Function(Tab tab) callback);
+  external static OnUpdated get onUpdated;
 }
 
 @JS()
-class CreateProperties {
-  bool active;
-  num index;
-  num openerTabId;
-  bool pinned;
-  bool selected;
-  String url;
-  num windowId;
-}
-
-@JS()
-class Tab {
-  bool active;
+class OnUpdated {
+  external factory OnUpdated();
+  external addListener(
+      void Function(int tabId, ChangeInfo changeInfo, Tab tab) callback);
 }
 
 void main() {
+  void tabListenerFunction(int tabId, ChangeInfo changeInfo, Tab tab) {
+    if (changeInfo.status == 'loading') {
+      print(changeInfo.status);
+      print(tab.url);
+    }
+  }
+
   print('Hello world TESTING THE THING');
   print(ChromeRuntime.id);
   print(ChromeTabs.TAB_ID_NONE);
   // print(three);
 
   // print(ChromeTabs.getCurrent());
-  ChromeTabs.create(
-      CreateProperties(), allowInterop((tab) => print(tab.active)));
+  ChromeTabs.onUpdated.addListener(allowInterop(tabListenerFunction));
+
+  ChromeTabs.create(CreateProperties(url: 'https://www.google.com'),
+      allowInterop((tab) => {print(tab.discarded)}));
 }

@@ -1,5 +1,5 @@
-name: cli
-description: A sample command-line application.
+name: chrome_api
+description: A wrapper for the Chrome extension API to use the chrome handles inside dart.
 # version: 1.0.0
 # homepage: https://www.example.com
 
