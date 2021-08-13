@@ -1,6 +1,34 @@
+import 'dart:async';
 import 'package:js/js.dart';
+import 'package:js/js_util.dart';
 
+//TODO: Proper enum support maybe?
 enum TabStatus { unloaded, loading, complete }
+
+class ChromeWebTabs {
+  Future<Tab> create(CreateProperties createProperties) async {
+    Completer callBackToFuture = new Completer();
+    var returnedFuture = ChromeTabs.create(createProperties);
+    return promiseToFuture(returnedFuture);
+  }
+}
+
+@JS('chrome.tabs')
+class ChromeTabs {
+  external factory ChromeTabs();
+  external static void loadTimes();
+  external static get TAB_ID_NONE;
+  external static getCurrent(void Function() callback);
+  external static Tab create(CreateProperties createProperties);
+  external static OnUpdated get onUpdated;
+}
+
+@JS()
+class OnUpdated {
+  external factory OnUpdated();
+  external addListener(
+      void Function(int tabId, ChangeInfo changeInfo, Tab tab) callback);
+}
 
 @JS()
 @anonymous
